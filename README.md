@@ -7,7 +7,7 @@ This repository contains the backend codebase, optimization algorithms, and arch
 ## Project Structure
 
 *   `logging_middleware/` - Core reusable package managing dynamic bearer token retrieval, parameter validation, automatic message truncation, and Express logging middleware integration.
-*   `vehicle_scheduling/` & `vehicle_maintence_scheduler/` - Optimization microservices utilizing a 0-1 Knapsack Dynamic Programming algorithm to schedule vehicle repairs within mechanic hourly budgets. Exposes API endpoints on port `5001`.
+*   `vehicle_maintence_scheduler/` - Optimization microservice utilizing a 0-1 Knapsack Dynamic Programming algorithm to schedule vehicle repairs within mechanic hourly budgets. Exposes API endpoints on port `5001`.
 *   `notification_app_be/` - Backend notifications service implementing the priority inbox engine (`priority_inbox.js`) with dynamic ranking logic.
 *   `notification_system_design.md` - System architecture specification document for high-throughput, low-latency campus notifications (Stages 1-6).
 *   `.env` - Local environment variables for evaluation endpoints and access credentials.
@@ -39,9 +39,8 @@ Ensure Node.js (v20+) is installed before executing commands.
 This starts the Express server listening on port `5001`.
 
 ```bash
-node --env-file=.env vehicle_scheduling/scheduler.js
+node --env-file=.env vehicle_maintence_scheduler/scheduler.js
 ```
-*(Note: Code is identical in `vehicle_maintence_scheduler/scheduler.js` to ensure support for both folder structure specifications).*
 
 #### Verify the Scheduler Endpoint:
 Send a `GET` or `POST` request to the scheduler endpoint to optimize vehicle repair operations:
@@ -85,6 +84,5 @@ node logging_middleware/server.js
 ## Verification & Output Screenshots
 
 Validation outputs showing local test executions are stored in:
-- `vehicle_scheduling/screenshots/` (Scheduler API responses)
 - `vehicle_maintence_scheduler/screenshots/` (Scheduler API responses)
 - `notification_app_be/screenshots/` (Priority inbox CLI output)
