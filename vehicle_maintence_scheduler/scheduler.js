@@ -1,6 +1,12 @@
+const express = require('express');
 const http = require('http');
 const https = require('https');
 const { Log } = require('../logging_middleware/index');
+
+const app = express();
+app.use(express.json());
+
+const PORT = process.env.PORT || 5001;
 
 function requestJson(urlStr, method, payloadObj = null, token = null) {
   return new Promise((resolve, reject) => {
@@ -105,9 +111,9 @@ function knapsack(capacity, items) {
   };
 }
 
-async function runScheduler() {
+async function handleScheduleRequest(req, res) {
   try {
-    await Log('backend', 'info', 'cron_job', 'Scheduler optimization started');
+    await Log('backend', 'info', 'cron_job', 'API request for scheduler received');
 
     const token = await getAccessToken();
 
@@ -127,36 +133,46 @@ async function runScheduler() {
     const depots = depotsData.depots;
     const vehicles = vehiclesData.vehicles;
 
-    console.log(`Successfully fetched ${depots.length} depots and ${vehicles.length} vehicles.`);
+    const results = [];
 
     for (const depot of depots) {
       const capacity = depot.MechanicHours;
       const result = knapsack(capacity, vehicles);
 
-      console.log(`\n========================================`);
-      console.log(`DEPOT ID: ${depot.ID}`);
-      console.log(`Mechanic Hours Budget: ${capacity} hours`);
-      console.log(`----------------------------------------`);
-      console.log(`Selected Vehicles for Service:`);
-      result.selectedItems.forEach(item => {
-        console.log(` - Task: ${item.TaskID} | Duration: ${item.Duration} hrs | Impact: ${item.Impact}`);
+      results.push({
+        depotID: depot.ID,
+        mechanicHours: capacity,
+        totalScheduledHours: result.totalDuration,
+        totalOperationalImpact: result.maxImpact,
+        selectedVehicles: result.selectedItems
       });
-      console.log(`----------------------------------------`);
-      console.log(`Total Scheduled Hours: ${result.totalDuration} hours`);
-      console.log(`Total Operational Impact Score: ${result.maxImpact}`);
-      console.log(`========================================`);
 
       const logMsg = `Depot ${depot.ID} optimized: Impact ${result.maxImpact}, Hours ${result.totalDuration}`;
       await Log('backend', 'info', 'cron_job', logMsg);
     }
 
-    await Log('backend', 'info', 'cron_job', 'Scheduler optimization completed');
+    await Log('backend', 'info', 'cron_job', 'API request scheduler successfully processed');
+
+    res.json({
+      success: true,
+      depots: results
+    });
 
   } catch (err) {
-    console.error('Scheduler Execution Failed:', err.message);
-    await Log('backend', 'fatal', 'cron_job', `Scheduler failed: ${err.message.substring(0, 30)}`)
+    console.error('API Scheduler Error:', err.message);
+    await Log('backend', 'fatal', 'cron_job', `API Scheduler failed: ${err.message.substring(0, 30)}`)
       .catch(e => console.error('Failed to log error:', e.message));
+
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
   }
 }
 
-runScheduler();
+app.get('/api/schedule', handleScheduleRequest);
+app.post('/api/schedule', handleScheduleRequest);
+
+app.listen(PORT, () => {
+  console.log(`Scheduler Microservice is running on port ${PORT}`);
+});

@@ -35,16 +35,17 @@ LOG_CLIENT_SECRET=your_client_secret
 
 Ensure Node.js (v20+) is installed before executing the commands.
 
-### 1. Run the Optimization Scheduler
-This loads env variables, fetches depots and vehicle tasks from the protected endpoints, runs the Knapsack solver, logs the results, and displays the schedule allocation in the terminal.
+### 1. Run the Optimization Scheduler API Server
+This starts the Express server listening on port `5001`.
 
 ```bash
-# Using the vehicle_scheduling directory
 node --env-file=.env vehicle_scheduling/scheduler.js
-
-# Using the vehicle_maintence_scheduler directory
 node --env-file=.env vehicle_maintence_scheduler/scheduler.js
 ```
+
+You can now use Postman, Insomnia, or curl to send requests to the API endpoints and retrieve the Knapsack-optimized results:
+* **Endpoint:** `POST http://localhost:5001/api/schedule` (or `GET`)
+* **Response:** A JSON payload containing the optimal subset of vehicles scheduled for each depot.
 
 ### 2. Verify Logging Middleware
 This executes validation checks (stack, level, package) and makes a secure POST request to the remote log server.
