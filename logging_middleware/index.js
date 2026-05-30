@@ -111,7 +111,6 @@ async function Log(stack, level, package, message) {
     throw new Error(`Invalid message: must be a string.`);
   }
 
-  // Truncate message to 48 characters maximum to satisfy API requirements
   const cleanMessage = message.length > 48 ? message.substring(0, 45) + '...' : message;
 
   const timestamp = new Date().toISOString();

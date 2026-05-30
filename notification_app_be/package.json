@@ -4,7 +4,8 @@
   "description": "Backend service for notification app",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "priority": "node --env-file=../.env priority_inbox.js"
   },
   "dependencies": {}
 }
