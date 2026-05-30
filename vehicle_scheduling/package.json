@@ -1,0 +1,10 @@
+{
+  "name": "vehicle-scheduling",
+  "version": "1.0.0",
+  "description": "Vehicle maintenance scheduler microservice",
+  "main": "scheduler.js",
+  "scripts": {
+    "start": "node scheduler.js"
+  },
+  "dependencies": {}
+}
