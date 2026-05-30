@@ -1,0 +1,10 @@
+{
+  "name": "notification-app-be",
+  "version": "1.0.0",
+  "description": "Backend service for notification app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {}
+}
