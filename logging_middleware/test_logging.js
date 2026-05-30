@@ -3,14 +3,22 @@ const { Log } = require('./index');
 async function runTests() {
   console.log('--- Starting Logging Middleware Tests ---');
   
-  if (!process.env.LOG_API_TOKEN) {
-    process.env.LOG_API_TOKEN = 'test_dummy_token_2300031514';
-    console.log('LOG_API_TOKEN was not set. Using dummy token:', process.env.LOG_API_TOKEN);
+  if (!process.env.LOG_EMAIL) {
+    console.log('LOG_EMAIL was not set. Using test credentials...');
+    process.env.LOG_EMAIL = '2300031514cseelge@gmail.com';
+    process.env.LOG_NAME = 'b suraj patra';
+    process.env.LOG_ROLL_NO = '2300031514';
+    process.env.LOG_ACCESS_CODE = 'AvrAAK';
+    process.env.LOG_CLIENT_ID = 'dfe20271-97e3-4773-b98f-63d0fa85bcd3';
+    process.env.LOG_CLIENT_SECRET = 'YUnKrYmfAvuChCMd';
+  }
+
+  if (!process.env.LOG_AUTH_URL) {
+    process.env.LOG_AUTH_URL = 'http://4.224.186.213/evaluation-service/auth';
   }
 
   if (!process.env.LOG_API_URL) {
     process.env.LOG_API_URL = 'http://4.224.186.213/evaluation-service/logs';
-    console.log('LOG_API_URL was not set. Using test server:', process.env.LOG_API_URL);
   }
 
   let passed = 0;
@@ -47,18 +55,13 @@ async function runTests() {
   }
 
   try {
-    console.log('\nTest 4: Sending log with valid parameters (should reach the server)...');
-    const response = await Log('backend', 'info', 'db', 'Testing logging connection from middleware package');
+    console.log('\nTest 4: Sending log with valid parameters...');
+    const response = await Log('backend', 'info', 'db', 'Testing logging connection');
     console.log('✅ Test 4 Passed: Log sent successfully. Server response:', response);
     passed++;
   } catch (err) {
-    if (err.message.includes('status code 401') || err.message.includes('authorization') || err.message.includes('Invalid authorization')) {
-      console.log('✅ Test 4 Passed: Connection established, but server returned auth error (expected with dummy token):', err.message);
-      passed++;
-    } else {
-      console.error('❌ Test 4 Failed: Network or unknown error occurred:', err.message);
-      failed++;
-    }
+    console.error('❌ Test 4 Failed:', err.message || err);
+    failed++;
   }
 
   console.log(`\n--- Test Summary: ${passed} passed, ${failed} failed ---`);
