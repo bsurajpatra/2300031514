@@ -94,10 +94,10 @@ async function runPriorityInbox() {
     const scored = notifications.map(item => {
       const type = item.Type || 'Event';
       const weight = WEIGHTS[type] || 0;
-      
+
       const isoStr = item.Timestamp.replace(' ', 'T');
       const timeSec = Math.floor(new Date(isoStr).getTime() / 1000);
-      
+
       const score = (weight * 172800) + timeSec;
 
       return {
