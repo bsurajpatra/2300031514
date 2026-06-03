@@ -2,10 +2,9 @@
   "name": "notification-app-be",
   "version": "1.0.0",
   "description": "Backend service for notification app",
-  "main": "app.js",
+  "main": "priority_inbox.js",
   "scripts": {
-    "start": "node app.js",
-    "priority": "node --env-file=../.env priority_inbox.js"
+    "start": "node --env-file=../.env priority_inbox.js"
   },
   "dependencies": {}
 }
