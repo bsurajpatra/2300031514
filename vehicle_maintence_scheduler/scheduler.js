@@ -1,12 +1,6 @@
-const express = require('express');
 const http = require('http');
 const https = require('https');
 const { Log } = require('../logging_middleware/index');
-
-const app = express();
-app.use(express.json());
-
-const PORT = process.env.PORT || 5001;
 
 function requestJson(urlStr, method, payloadObj = null, token = null) {
   return new Promise((resolve, reject) => {
@@ -111,9 +105,9 @@ function knapsack(capacity, items) {
   };
 }
 
-async function handleScheduleRequest(req, res) {
+async function runScheduler() {
   try {
-    await Log('backend', 'info', 'cron_job', 'API request for scheduler received');
+    await Log('backend', 'info', 'cron_job', 'Scheduler optimization service started');
 
     const token = await getAccessToken();
 
@@ -151,28 +145,26 @@ async function handleScheduleRequest(req, res) {
       await Log('backend', 'info', 'cron_job', logMsg);
     }
 
-    await Log('backend', 'info', 'cron_job', 'API request scheduler successfully processed');
-
-    res.json({
-      success: true,
-      depots: results
+    console.log(`\n========================================`);
+    console.log(`VEHICLE MAINTENANCE OPTIMIZATION REPORT`);
+    console.log(`========================================`);
+    results.forEach(depot => {
+      console.log(`Depot ID: ${depot.depotID}`);
+      console.log(`  - Mechanic Budget:    ${depot.mechanicHours} hours`);
+      console.log(`  - Scheduled Hours:    ${depot.totalScheduledHours} hours`);
+      console.log(`  - Operational Impact: ${depot.totalOperationalImpact} points`);
+      console.log(`  - Vehicles Scheduled: ${depot.selectedVehicles.length} vehicles`);
+      console.log(`----------------------------------------`);
     });
+    console.log(`========================================\n`);
+
+    await Log('backend', 'info', 'cron_job', 'Scheduler optimization processed successfully');
 
   } catch (err) {
-    console.error('API Scheduler Error:', err.message);
-    await Log('backend', 'fatal', 'cron_job', `API Scheduler failed: ${err.message.substring(0, 30)}`)
+    console.error('Scheduler Execution Failed:', err.message);
+    await Log('backend', 'fatal', 'cron_job', `Scheduler failed: ${err.message.substring(0, 30)}`)
       .catch(e => console.error('Failed to log error:', e.message));
-
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
   }
 }
 
-app.get('/api/schedule', handleScheduleRequest);
-app.post('/api/schedule', handleScheduleRequest);
-
-app.listen(PORT, () => {
-  console.log(`Scheduler Microservice is running on port ${PORT}`);
-});
+runScheduler();

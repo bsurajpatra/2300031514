@@ -4,9 +4,7 @@
   "description": "Scheduler component for vehicle maintenance",
   "main": "scheduler.js",
   "scripts": {
-    "start": "node scheduler.js"
+    "start": "node --env-file=../.env scheduler.js"
   },
-  "dependencies": {
-    "express": "^4.19.2"
-  }
+  "dependencies": {}
 }
